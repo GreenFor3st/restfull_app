@@ -113,7 +113,20 @@ class ActorListApi(Resource):
         return actor.to_dict(), 200
 
     def post(self):
-        pass
+        actor_json = request.json
+        if not actor_json:
+            return {'message': 'Wrong data'}, 400
+        try:
+            actor = Actor(
+                name=actor_json['name'],
+                birthday=datetime.datetime.strptime(actor_json['birth_date'], '%B %d, %Y'),
+                is_active=actor_json['is_active']
+            )
+            db.session.add(actor)
+            db.session.commit()
+        except (ValueError, KeyError):
+            return {'message': 'Wrong data'}, 400
+        return {'message': 'Created successfully', 'uuid': actor.uuid}, 201
 
     def put(self, uuid):
         pass
