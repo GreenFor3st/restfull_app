@@ -1,5 +1,4 @@
 from datetime import date, datetime
-
 from . import db, app
 from .models import Film, Actor
 
@@ -99,7 +98,6 @@ def populate_actors():
         db.session.add(emma_watson)
         db.session.add(rupert_grint)
         db.session.commit()
-
 
 
 if __name__ == '__main__':
