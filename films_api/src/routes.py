@@ -129,10 +129,29 @@ class ActorListApi(Resource):
         return {'message': 'Created successfully', 'uuid': actor.uuid}, 201
 
     def put(self, uuid):
-        pass
+        actor_json = request.json
+        if not actor_json:
+            return {'message': 'Wrong data'}, 400
+        try:
+            db.session.query(Film).filter_by(uuid=uuid).update(
+                dict(
+                    name=actor_json['name'],
+                    birthday=datetime.datetime.strptime(actor_json['birthday'], '%B %d, %Y'),
+                    is_active=actor_json['is_active']
+                )
+            )
+            db.session.commit()
+        except (ValueError, KeyError):
+            return {'message': 'Wrong data'}, 400
+        return {'message': 'Updated successfully'}, 200
 
     def delete(self, uuid):
-        pass
+        actor = db.session.query(Actor).filter_by(uuid=uuid).first()
+        if not actor:
+            return "", 404
+        db.session.delete(actor)
+        db.session.commit()
+        return '', 204
 
 
 api.add_resource(Smoke, '/smoke', strict_slashes=False)
